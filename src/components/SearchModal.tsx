@@ -19,6 +19,7 @@ export default function SearchModal({
   onPresetVisualSearch,
   onClearVisualSearch,
   onQuickAddToCart,
+  onOpenQuickView,
   onNavigate,
   showToast
 }: any) {
@@ -30,8 +31,8 @@ export default function SearchModal({
       <div 
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
           onClick={() => {
-            setIsSearchOpen(false);
-            handleClearVisualSearch();
+            onClose();
+            onClearVisualSearch();
           }}
         >
           <div 
@@ -40,8 +41,8 @@ export default function SearchModal({
           >
             <button 
               onClick={() => {
-                setIsSearchOpen(false);
-                handleClearVisualSearch();
+                onClose();
+                onClearVisualSearch();
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-black py-0.5 px-1.5 rounded cursor-pointer"
             >
@@ -50,14 +51,14 @@ export default function SearchModal({
 
             <div className="space-y-6 text-gray-800">
               {/* Text Search Form */}
-              <form onSubmit={handleTriggerHeaderSearch} className="space-y-3">
+              <form onSubmit={onTriggerHeaderSearch} className="space-y-3">
                 <h3 className="text-xs uppercase tracking-widest text-[#74070e] font-bold border-l-2 border-[#74070e] pl-2">TÌM KIẾM SẢN PHẨM</h3>
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     autoFocus
                     value={headerSearchInput}
-                    onChange={(e) => setHeaderSearchInput(e.target.value)}
+                    onChange={(e) => onSetHeaderSearchInput(e.target.value)}
                     placeholder="Vui lòng nhập từ khóa"
                     className="flex-1 bg-gray-50 border border-transparent focus:border-gray-200 outline-none rounded-xl text-sm px-4 py-3 text-gray-800 placeholder:text-gray-400 font-light"
                   />
@@ -77,7 +78,7 @@ export default function SearchModal({
                   <button 
                     key={tag}
                     onClick={() => {
-                      setHeaderSearchInput(tag);
+                      onSetHeaderSearchInput(tag);
                     }}
                     className="bg-gray-50 hover:bg-gray-100 text-gray-600 px-2.5 py-1 rounded border border-gray-100 cursor-pointer text-[9px] transition-colors"
                   >
@@ -106,7 +107,7 @@ export default function SearchModal({
                         type="file" 
                         accept="image/*" 
                         className="hidden" 
-                        onChange={handleImageUploadSearch} 
+                        onChange={onImageUploadSearch} 
                       />
                     </label>
                   </div>
@@ -160,17 +161,10 @@ export default function SearchModal({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setQuickViewProduct(matchedProduct);
-                                    // Match size first available
-                                    if (matchedProduct.sizes?.length) {
-                                      setSelectedSize(matchedProduct.sizes[0]);
+                                    if (onOpenQuickView) {
+                                      onOpenQuickView(matchedProduct);
                                     }
-                                    // Match color first available
-                                    if (matchedProduct.colors?.length) {
-                                      setSelectedColor(matchedProduct.colors[0]);
-                                      setPreviewImage(matchedProduct.image);
-                                    }
-                                    setIsSearchOpen(false);
+                                    onClose();
                                   }}
                                   className="px-3 py-1.5 bg-[#74070e] hover:bg-[#5a050a] text-white text-[9.5px] uppercase tracking-wider rounded-md font-semibold cursor-pointer transition-colors"
                                 >
@@ -179,8 +173,8 @@ export default function SearchModal({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setSearchQuery(matchedProduct.name);
-                                    setIsSearchOpen(false);
+                                    onSetHeaderSearchInput(matchedProduct.name);
+                                    onClose();
                                     setCurrentPage("products");
                                   }}
                                   className="px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-600 text-[9.5px] uppercase tracking-wider rounded-md font-semibold cursor-pointer transition-colors"
@@ -189,7 +183,7 @@ export default function SearchModal({
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={handleClearVisualSearch}
+                                  onClick={onClearVisualSearch}
                                   className="px-2.5 py-1.5 hover:bg-gray-100 text-gray-400 hover:text-gray-600 text-[10px] rounded-md transition-colors font-medium cursor-pointer"
                                   title="Thử tìm bằng hình khác"
                                 >
@@ -212,8 +206,8 @@ export default function SearchModal({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setIsSearchOpen(false);
-                                    handleClearVisualSearch();
+                                    onClose();
+                                    onClearVisualSearch();
                                     setCurrentPage("products");
                                   }}
                                   className="px-4 py-2 bg-[#74070e] hover:bg-[#5a050a] text-white text-[9.5px] uppercase tracking-wider rounded-md font-semibold cursor-pointer transition-colors"
@@ -222,7 +216,7 @@ export default function SearchModal({
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={handleClearVisualSearch}
+                                  onClick={onClearVisualSearch}
                                   className="px-2.5 py-1.5 bg-white hover:bg-gray-100 border border-gray-200 text-gray-500 text-[10px] rounded-md transition-colors font-medium cursor-pointer"
                                 >
                                   Tải ảnh khác

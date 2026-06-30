@@ -76,7 +76,7 @@ Hãy giữ câu trả lời súc tích, tinh tế và ấm áp. Tránh các icon
 function getSimulationResponse(messages: any[]): string {
   const userMsg = messages[messages.length - 1]?.content?.toLowerCase() || "";
   let reply = "Dạ chào mừng Quý cô đến với thế giới thời trang tối giản của Chéri! ✨ Chéri rất hân hạnh được đồng hành và tư vấn phong cách riêng cho quý cô. ";
-  
+
   if (userMsg.includes("sơ mi") || userMsg.includes("áo lụa") || userMsg.includes("mulberry")) {
     reply += "Dạ, mẫu Áo Sơ Mi Lụa Mulberry (1.250.000₫) thản nhiên toát lên khí chất vương giả nhờ lụa tơ tằm tự nhiên 100%. Mẫu này phối cùng Quần Tây Ống Suông Silk Crepe tạo dải màu tối giản siêu hack dáng đó ạ ✨";
   } else if (userMsg.includes("đầm") || userMsg.includes("váy") || userMsg.includes("satin") || userMsg.includes("tiệc")) {
@@ -119,7 +119,7 @@ app.post("/api/chat", async (req, res) => {
       // Prepare content structure for modern @google/genai SDK
       // Convert format {role: 'user'|'assistant', content: string} to standard text inputs
       const lastMessage = messages[messages.length - 1];
-      
+
       // Create history context
       const chatHistory = messages.slice(0, messages.length - 1).map(m => ({
         role: m.role === "assistant" ? "model" as const : "user" as const,
@@ -128,7 +128,7 @@ app.post("/api/chat", async (req, res) => {
 
       // Call Gemini API using modern SDK
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.0-flash",
         contents: [
           ...chatHistory,
           { role: "user" as const, parts: [{ text: lastMessage.content }] }
@@ -158,7 +158,7 @@ function seededRandom(seedStr: string) {
   for (let i = 0; i < seedStr.length; i++) {
     h = Math.imul(31, h) + seedStr.charCodeAt(i) | 0;
   }
-  return function() {
+  return function () {
     h = Math.imul(h ^ h >>> 16, 2246822507);
     h = Math.imul(h ^ h >>> 13, 3266489909);
     return ((h ^= h >>> 16) >>> 0) / 4294967296;
@@ -177,7 +177,7 @@ app.get("/api/shipping/track/:orderId", (req, res) => {
   }
 
   const rand = seededRandom(orderId);
-  
+
   // Predict driver and route based on orderId seed
   const drivers = ["Nguyễn Văn Nam", "Trần Hoàng Long", "Lê Gia Huy", "Phạm Cao Sơn", "Vũ Hoàng Gia"];
   const driverPhotos = [
@@ -187,7 +187,7 @@ app.get("/api/shipping/track/:orderId", (req, res) => {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150",
     "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=150"
   ];
-  
+
   const driverIdx = Math.floor(rand() * drivers.length);
   const driverName = drivers[driverIdx];
   const driverImg = driverPhotos[driverIdx];
@@ -195,7 +195,7 @@ app.get("/api/shipping/track/:orderId", (req, res) => {
 
   // Determine current status. If client passed statusParam, respect it. Otherwise, default deterministically
   let currentStatus: "pending" | "preparing" | "shipped" | "delivering" | "delivered" = "shipped";
-  
+
   if (statusParam) {
     if (statusParam === "preparing") {
       // Map "Chờ giao hàng" to "Đang giao" during tracking as requested
@@ -235,7 +235,7 @@ app.get("/api/shipping/track/:orderId", (req, res) => {
   // Intermediary coordinates based on status
   let currentLat = startLat;
   let currentLng = startLng;
-  
+
   if (currentStatus === "pending" || currentStatus === "preparing") {
     currentLat = startLat;
     currentLng = startLng;
@@ -262,7 +262,7 @@ app.get("/api/shipping/track/:orderId", (req, res) => {
 
   // Dynamic deterministic timeline generation relative to actual date or simulated historic days
   const timeline: any[] = [];
-  
+
   // Format dates: we can use realistic Vietnamese formats
   const dateStr = (daysAgo: number) => {
     const d = new Date();
@@ -410,7 +410,7 @@ function mapColorNameToHex(name: string): string {
 
 function getPlaceholderImageForCategory(category: string, secondary = false): string {
   if (category === "tops") {
-    return secondary 
+    return secondary
       ? "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800"
       : "https://images.unsplash.com/photo-1548624149-f95ab51fc05b?auto=format&fit=crop&q=80&w=800";
   } else if (category === "bottoms") {
@@ -466,14 +466,14 @@ function parseTSV(tsvText: string): any[] {
   // Parse lines with double quotes and multi-line support
   const rowsList: string[][] = [];
   let buffer = "";
-  
+
   for (const line of lines) {
     if (buffer) {
       buffer += "\n" + line;
     } else {
       buffer = line;
     }
-    
+
     // Count quotes
     const quoteCount = (buffer.match(/"/g) || []).length;
     if (quoteCount % 2 === 0) {
@@ -483,7 +483,7 @@ function parseTSV(tsvText: string): any[] {
       buffer = "";
     }
   }
-  
+
   if (rowsList.length < 2) return [];
 
   const headers = rowsList[0].map(h => h.trim().toLowerCase());
@@ -500,14 +500,14 @@ function parseTSV(tsvText: string): any[] {
   };
 
   const groups: Record<string, string[][]> = {};
-  
+
   // Group lines by handle (groupId)
   for (let i = 1; i < rowsList.length; i++) {
     const cols = rowsList[i];
     if (cols.length === 0 || !cols[0]) continue;
     const productGroupId = getCol(cols, "handle", 0);
     if (!productGroupId) continue;
-    
+
     if (!groups[productGroupId]) {
       groups[productGroupId] = [];
     }
@@ -756,14 +756,14 @@ app.get("/api/products", async (req, res) => {
   try {
     const sheetId = "1Qe41ZrCGUaHXNnftPTyaYwzpLiW2E3xpGcrCMk4muLI";
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=tsv`;
-    
+
     const response = await fetch(sheetUrl);
     if (!response.ok) {
       throw new Error(`Google Spreadsheet returned status ${response.status}`);
     }
     const tsvText = await response.text();
     const parsed = parseTSV(tsvText);
-    
+
     if (parsed && parsed.length > 0) {
       cachedProducts = parsed;
       cacheTimestamp = now;

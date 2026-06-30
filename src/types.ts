@@ -79,6 +79,7 @@ export interface ShippingTracking {
   trackingNumber: string;
   driverName: string;
   driverPhone: string;
+  driverImg?: string;
   estimatedDeliveryDate: string;
   currentStatus: "pending" | "preparing" | "shipped" | "delivering" | "delivered" | "failed";
   currentStatusText: string;

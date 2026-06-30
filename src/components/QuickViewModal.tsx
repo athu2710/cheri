@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Heart, Star, Compass, Feather, Globe, ShoppingBag } from "lucide-react";
+import { X, Heart, Star, Compass, Feather, Globe, ShoppingBag, ArrowRight } from "lucide-react";
 import { formatVND } from "../utils";
 import { Product } from "../types";
 
@@ -27,7 +27,7 @@ export default function QuickViewModal({
     <>
       <div 
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4"
-          onClick={() => setQuickViewProduct(null)}
+          onClick={() => onClose()}
         >
           <div 
             className="bg-white rounded-none border border-[#74070e]/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-none relative grid grid-cols-1 md:grid-cols-2 p-6 sm:p-10 gap-8 animate-fade-in text-[#74070e]"
@@ -35,7 +35,7 @@ export default function QuickViewModal({
           >
             {/* Close modal */}
             <button 
-              onClick={() => setQuickViewProduct(null)}
+              onClick={() => onClose()}
               className="absolute top-4 right-4 text-gray-400 hover:text-[#74070e] p-1.5 rounded-none hover:bg-stone-50 transition-colors cursor-pointer z-10"
             >
               <X className="w-5 h-5" />
@@ -54,7 +54,7 @@ export default function QuickViewModal({
                 ).map((imgUrl, imgIdx) => (
                   <button 
                     key={imgIdx}
-                    onClick={() => setPreviewImage(imgUrl)}
+                    onClick={() => onSetPreviewImage(imgUrl)}
                     className={`w-12 h-16 rounded-none overflow-hidden border bg-[#FCFBF9] transition-all cursor-pointer flex-shrink-0 ${previewImage === imgUrl ? "border-[#74070e]" : "border-[#74070e]/10"}`}
                   >
                     <img src={imgUrl} alt={`Preview ${imgIdx + 1}`} className="w-full h-full object-cover" />
@@ -89,7 +89,7 @@ export default function QuickViewModal({
                       {(quickViewProduct as any).classifications.map((cl: string) => (
                         <button
                           key={cl}
-                          onClick={() => setSelectedClassification(cl)}
+                          onClick={() => onSetSelectedClassification(cl)}
                           className={`px-3 py-1.5 border text-xs font-light tracking-wide cursor-pointer transition-all ${
                             selectedClassification === cl
                               ? "bg-[#74070e] text-white border-[#74070e]"
@@ -111,7 +111,7 @@ export default function QuickViewModal({
                       {quickViewProduct.colors.map((color) => (
                         <button
                           key={color.hex}
-                          onClick={() => setSelectedColor(color)}
+                          onClick={() => onSetSelectedColor(color)}
                           className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
                             selectedColor && selectedColor.hex === color.hex ? "border-[#74070e] scale-102" : "border-gray-200"
                           }`}
@@ -146,7 +146,7 @@ export default function QuickViewModal({
                       {quickViewProduct.sizes.map((size) => (
                         <button
                           key={size}
-                          onClick={() => setSelectedSize(size)}
+                          onClick={() => onSetSelectedSize(size)}
                           className={`w-8 h-8 rounded-none border text-xs font-light tracking-wide cursor-pointer flex items-center justify-center transition-all ${
                             selectedSize === size
                               ? "bg-[#74070e] text-white border-[#74070e]"
@@ -173,7 +173,7 @@ export default function QuickViewModal({
               <div className="flex items-center gap-3 sm:gap-4 pt-4 border-t border-[#74070e]/10">
                 {/* 1. Mua ngay (Primary Button, larger width, dark red background, white text) */}
                 <button
-                  onClick={quickViewProduct.inStock ? handleBuyNowFromModal : undefined}
+                  onClick={quickViewProduct.inStock ? onBuyNow : undefined}
                   disabled={!quickViewProduct.inStock}
                   className={`h-[52px] flex-1 sm:flex-none sm:w-[220px] text-xs uppercase tracking-[0.15em] rounded-md font-medium transition-all duration-300 flex items-center justify-center space-x-2 ${
                     quickViewProduct.inStock 
@@ -193,7 +193,7 @@ export default function QuickViewModal({
 
                 {/* 2. Giỏ hàng (Square, white background, light gray border, centered icon) */}
                 <button
-                  onClick={quickViewProduct.inStock ? handleAddFromModal : undefined}
+                  onClick={quickViewProduct.inStock ? onAddToCart : undefined}
                   disabled={!quickViewProduct.inStock}
                   className={`h-[52px] w-[52px] flex-shrink-0 border rounded-md transition-all duration-300 flex items-center justify-center ${
                     quickViewProduct.inStock 
@@ -208,7 +208,7 @@ export default function QuickViewModal({
                 {/* 3. Yêu thích (Square, same size as shopping cart, white background, light gray border, centered icon) */}
                 <button
                   onClick={(e) => {
-                    handleToggleWishlist(quickViewProduct.id, e);
+                    onToggleWishlist(quickViewProduct.id, e);
                   }}
                   className="h-[52px] w-[52px] flex-shrink-0 bg-white hover:bg-gray-50 border border-[#E5E5E5] text-[#74070e] rounded-md transition-all duration-300 flex items-center justify-center cursor-pointer"
                   title="Thêm yêu thích"

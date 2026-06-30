@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Star, CheckCircle2 } from "lucide-react";
+import { X, Star, CheckCircle2, ShoppingBag } from "lucide-react";
 
 export default function ReviewModal({
   reviewModalOpen,
@@ -11,7 +11,8 @@ export default function ReviewModal({
   onSetReviewRating,
   onSetReviewText,
   onSetSelectedReviewPreset,
-  onReviewSubmit
+  onReviewSubmit,
+  getProductImage
 }: any) {
   if (!reviewModalOpen || !reviewTarget) return null;
   
@@ -19,7 +20,7 @@ export default function ReviewModal({
     <>
       <div 
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setReviewModalOpen(false)}
+          onClick={() => onClose()}
         >
           <div 
             className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-fade-in text-gray-800"
@@ -28,7 +29,7 @@ export default function ReviewModal({
             {/* Close button icon */}
             <button 
               type="button"
-              onClick={() => setReviewModalOpen(false)}
+              onClick={() => onClose()}
               className="absolute top-4 right-4 text-gray-400 hover:text-[#74070e] p-1.5 rounded-full hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
@@ -91,7 +92,7 @@ export default function ReviewModal({
                     <button
                       key={star}
                       type="button"
-                      onClick={() => setReviewRating(star)}
+                      onClick={() => onSetReviewRating(star)}
                       className="cursor-pointer transition-transform duration-100 active:scale-95 p-1"
                     >
                       <Star 
@@ -132,9 +133,9 @@ export default function ReviewModal({
                         type="button"
                         onClick={() => {
                           if (selectedReviewPreset === phrase) {
-                            setSelectedReviewPreset("");
+                            onSetSelectedReviewPreset("");
                           } else {
-                            setSelectedReviewPreset(phrase);
+                            onSetSelectedReviewPreset(phrase);
                           }
                         }}
                         className={`p-2.5 text-left text-[10px] sm:text-xs rounded-xl border transition-all cursor-pointer font-light leading-snug flex items-start space-x-1.5 ${
@@ -159,7 +160,7 @@ export default function ReviewModal({
                 <textarea
                   value={reviewText}
                   onChange={(e) => {
-                    setReviewText(e.target.value);
+                    onSetReviewText(e.target.value);
                   }}
                   rows={3}
                   placeholder="Lời chia sẻ trân quý từ Quý cô... Hãy viết trải nghiệm chân thực nhất của chị nhé."
@@ -171,40 +172,14 @@ export default function ReviewModal({
               <div className="flex space-x-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setReviewModalOpen(false)}
+                  onClick={() => onClose()}
                   className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs uppercase tracking-widest py-3 rounded-xl transition-all cursor-pointer font-medium"
                 >
                   Trở lại
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    // Save evaluate metrics
-                    const itemKey = reviewTarget.isOrderReview 
-                      ? reviewTarget.orderId 
-                      : `${reviewTarget.orderId}_${reviewTarget.productId}`;
-                    const parts = [];
-                    if (selectedReviewPreset) parts.push(selectedReviewPreset);
-                    if (reviewText.trim()) parts.push(reviewText.trim());
-                    const customComment = parts.join(" - ") || "Sản phẩm tuyệt hảo tinh tế!";
-                    
-                    const updatedReviews = {
-                      ...reviewedItems,
-                      [itemKey]: {
-                        rating: reviewRating,
-                        text: customComment,
-                        date: new Date().toLocaleDateString("vi-VN")
-                      }
-                    };
-                    setReviewedItems(updatedReviews);
-                    safeLocalStorage.setItem("cheri_reviewed_items", JSON.stringify(updatedReviews));
-
-                    // Show custom sweet toast
-                    showToast("Trân trọng cảm ơn Quý cô đã đánh giá! Ý kiến vàng ngọc này giúp Chéri hoàn thiện không ngừng. 🌹", "success");
-                    
-                    // Close portal
-                    setReviewModalOpen(false);
-                  }}
+                  onClick={onReviewSubmit}
                   className="flex-grow bg-[#74070e] hover:bg-[#5a050a] text-white text-xs uppercase tracking-widest py-3 rounded-xl shadow-xs transition-colors cursor-pointer font-semibold"
                 >
                   Gửi đánh giá

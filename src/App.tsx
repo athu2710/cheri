@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "motion/react";
 import {
   Star, Share2,
@@ -1045,8 +1045,7 @@ export default function App() {
             onNavigate={setCurrentPage}
             onSetCategory={setSelectedCategory}
           />
-
-
+        )}
 
                 {/* VIEW 2: PRODUCTS CATALOGUE */}
         {currentPage === "products" && (
@@ -1311,6 +1310,7 @@ export default function App() {
         onPresetVisualSearch={handlePresetVisualSearch}
         onClearVisualSearch={handleClearVisualSearch}
         onQuickAddToCart={handleQuickAddToCart}
+        onOpenQuickView={openQuickView}
         onNavigate={setCurrentPage}
         showToast={showToast}
       />
@@ -1325,16 +1325,25 @@ export default function App() {
         onSetReviewRating={setReviewRating}
         onSetReviewText={setReviewText}
         onSetSelectedReviewPreset={setSelectedReviewPreset}
+        getProductImage={getProductImage}
         onReviewSubmit={(e) => {
-          e.preventDefault();
-          showToast("Đánh giá sản phẩm thành công! Cảm ơn quý cô rất nhiều 🥀");
+          if (e && e.preventDefault) e.preventDefault();
+          const parts = [];
+          if (selectedReviewPreset) parts.push(selectedReviewPreset);
+          if (reviewText.trim()) parts.push(reviewText.trim());
+          const customComment = parts.join(" - ") || "Sản phẩm tuyệt hảo tinh tế!";
+          
+          showToast("Trân trọng cảm ơn Quý cô đã đánh giá! Ý kiến vàng ngọc này giúp Chéri hoàn thiện không ngừng. 🌹", "success");
           setReviewModalOpen(false);
           const currentReviewed = JSON.parse(safeLocalStorage.getItem("cheri_reviewed_items") || "{}");
           if (reviewTarget) {
-            currentReviewed[reviewTarget.orderId + "_" + reviewTarget.productId] = {
+            const itemKey = reviewTarget.isOrderReview 
+              ? reviewTarget.orderId 
+              : `${reviewTarget.orderId}_${reviewTarget.productId}`;
+            currentReviewed[itemKey] = {
               rating: reviewRating,
-              text: reviewText,
-              date: new Date().toISOString()
+              text: customComment,
+              date: new Date().toLocaleDateString("vi-VN")
             };
             safeLocalStorage.setItem("cheri_reviewed_items", JSON.stringify(currentReviewed));
             setReviewedItems(currentReviewed);

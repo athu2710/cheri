@@ -1,10 +1,10 @@
 import React from "react";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { Sparkles, Heart } from "lucide-react";
 
 export default function AboutPage() {
   // Editorial fade-in variants
-  const fadeInUp = {
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 25 },
     visible: { 
       opacity: 1, 
@@ -13,7 +13,7 @@ export default function AboutPage() {
     }
   };
 
-  const staggerContainer = {
+  const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,

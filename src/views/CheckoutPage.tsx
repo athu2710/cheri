@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, ShoppingBag, ArrowRight } from "lucide-react";
+import { Check, ShoppingBag, ArrowRight, User } from "lucide-react";
 import { formatVND } from "../utils";
 
 export default function CheckoutPage({
@@ -80,7 +80,7 @@ export default function CheckoutPage({
             </h2>
 
             {selectedCartItems.length > 0 ? (
-              <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              <form onSubmit={onPlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                 
                 {/* Form fields & options (7 Columns) */}
                 <div className="lg:col-span-7 space-y-8">
